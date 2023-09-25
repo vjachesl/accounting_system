@@ -1,0 +1,87 @@
+To run an application please use  ./mvnw spring-boot:run 
+This will start the building process with the maven wrapper.
+
+The application will be up with h2 in memory DB and applied  schema.sql and data.sql with test data.
+
+The database console could be accessed with the next url http://localhost:8080/h2-ui/login.do
+Driver Class: org.h2.Driver
+JDBC URL:jdbc:h2:file:./target/in-memory-db/payments
+User Name:sa
+Password: 
+
+Swagger will be available at http://localhost:8080/swagger-ui/index.html#/
+
+For this controller is added some API information:
+http://localhost:8080/swagger-ui/index.html#/Payment-Document-API/createPaymentDocument
+
+Not every endpoint is working as expected. But you could create company, create account, create a payment document, 
+apply the payment document and receive the operations by account.
+
+You could use the next curls to check the functionality: 
+
+1. Check the existed companies:
+
+curl -X 'GET' \
+  'http://localhost:8080/api/companies/' \
+  -H 'accept: */*'
+
+2. Add the new company:
+
+curl -X 'POST' \
+  'http://localhost:8080/api/companies/' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "companyName": "SomeCompany",
+  "companyCode": 98765432,
+  "email": "contact@post.com",
+  "phone": "+4820948543340"
+}'
+
+3. Check if it appears by rerun the first request
+
+4. Create the account for the new company 
+
+curl -X 'POST' \
+  'http://localhost:8080/api/accounts/' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "accountNumber": "UA547568579867965",
+  "accountName": "Main Account",
+  "currency": "UAH",
+  "amount": 1000000,
+  "companyCode": 98765432
+}'  
+
+5. Create the payment document 
+
+curl -X 'POST' \
+  'http://localhost:8080/api/payment-documents/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "operationType": "DEBIT",
+  "account": "UA547568579867965",
+  "correspAccount": "UA678789345290876787967",
+  "amount": 500,
+  "currency": "UAH"
+}'
+
+6. Apply the created document 
+
+curl -X 'GET' \
+  'http://localhost:8080/api/payment-documents/apply/10' \
+  -H 'accept: */*'
+  
+7. And get operations for account:  
+
+curl -X 'GET' \
+  'http://localhost:8080/api/accounts/number/UA547568579867965/operations' \
+  -H 'accept: */*'
+
+
+
+
+  
+  
